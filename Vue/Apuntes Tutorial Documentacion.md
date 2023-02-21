@@ -335,3 +335,305 @@ export default {
 </template>
 ```
 
+## 9. Watchers
+
+A veces necesitamos realizar "efectos secundarios" de manera reactiva, como por ejemplo, loguear un numero en la consola cuando este cambia.
+Para lograr esto podemos utilizar la opcion watchers:
+
+```javascript
+export default {
+  data() {
+    return {
+      count: 0,
+    };
+  },
+  watch: {
+    count(newCount) {
+      console.log(`new count is: ${newCount}`);
+    },
+  },
+};
+```
+
+Aqui estamos usando la opcion `watch` para que vigile los cambios en la propiedad `count`. El callback de `watch` se llama cuando `count` cambia, y recibe el nuevo valor como argumento.
+
+Los watchers pueden recibir dos argumentos, siendo el primero de ellos el nuevo valor de la propiedad observada, y el segundo, el valor previo (util para comparaciones)
+
+Ej:
+
+```javascript
+watch: {
+  count(newCount, oldCount) {
+    // Logica que se quiera realizar
+  }
+}
+```
+
+> Para mas informacion sobre watchers, ver https://vuejs.org/guide/essentials/watchers.html
+
+Ejemplo del uso de Watchers para iterar datos:
+
+```javascript
+<script>
+export default {
+  data() {
+    return {
+      todoId: 1,
+      todoData: null
+    }
+  },
+  methods: {
+    async fetchData() {
+      this.todoData = null
+      const res = await fetch(
+        `https://jsonplaceholder.typicode.com/todos/${this.todoId}`
+      )
+      this.todoData = await res.json()
+    }
+  },
+  mounted() {
+    this.fetchData()
+  },
+  watch: {
+    todoId(id) {
+      this.fetchData()
+    }
+  }
+}
+</script>
+
+<template>
+  <p>Todo id: {{ todoId }}</p>
+  <button @click="todoId++">Fetch next todo</button>
+  <p v-if="!todoData">Loading...</p>
+  <pre v-else>{{ todoData }}</pre>
+</template>
+```
+
+## 10. Componentes
+
+Hasta ahora estuvimos viendo situaciones de un unico componente, pero las aplicaciones reales de Vue tipicamente se crean con componentes anidados.
+
+Un componente padre puede renderizar otro componente en su template, como un componente hijo. Para utilizar un componente hijo, primero necesitamos importarlo:
+
+```javascript
+import ChildComp from "./ChildComp.vue";
+
+export default {
+  components: {
+    ChildComp,
+  },
+};
+```
+
+Ademas de importarlo, necesitamos registrar el componente usando la opcion `components`. Aqui estamos usando la abreviacion de la propiedad del objeto para registrar el componente `ChildComp` bajo la key `ChildComp`.
+
+Luego podemos usar el componente en la plantilla como:
+
+```html
+<ChildComp />
+```
+
+> Es importante hacer la importacion dentro de la etiqueta de `<script>`
+
+Ejemplo de importacion:
+
+```javascript
+<script>
+  import ChildComp from "./ChildComp.vue"
+
+export default {
+  components: {
+    ChildComp
+  }
+}
+</script>
+
+<template>
+  <ChildComp />
+</template>
+```
+
+## 11. Props
+
+Un componente hijo puede aceptar inputs desde los componentes padres via `props`. Primero necesitamos declarar las `props` que este aceptará:
+
+```javascript
+// En el componente hijo
+export default {
+  props: {
+    msg: String,
+  },
+};
+```
+
+Una vez declarado, la prop `msg` queda expuesta al `this` y puede ser utilizada en la template del componente hijo.
+
+El componente padre puede pasar la prop al hijo como atributos. Para pasar un valor dinamico, tambien podemos utilizar la sintaxis de `v-bind`:
+
+```javascript
+<ChildComp :msg="greeting" />
+```
+
+Ejemplo completo:
+
+```javascript
+// Componente Padre
+<script>
+import ChildComp from './ChildComp.vue'
+
+export default {
+  components: {
+    ChildComp
+  },
+  data() {
+    return {
+      greeting: 'Hello from parent'
+    }
+  }
+}
+</script>
+
+<template>
+  <ChildComp :msg="greeting" />
+</template>
+
+// Componente hijo
+<script>
+export default {
+  props: {
+    msg: String
+  }
+}
+</script>
+
+<template>
+  <h2>{{ msg || 'No props passed yet' }}</h2>
+</template>
+```
+
+## 12. Emits
+
+En adicion a recibir props, un componente tambien puede emitir eventos al padre:
+
+```javascript
+export default {
+  // Se declaran los eventos a emitir
+  emits: ["response"],
+  created() {
+    // emite con un argumento
+    this.$emit("response", "hello from child");
+  },
+};
+```
+
+El primer argumento de `this.$emit()` es el nombre del evento. Cualquier argumento adicional se pasa al event listener.
+
+El componente padre puede escuchar los eventos emitidos por el componente hijo a traves del uso de `v-on`. Aqui el handler recibe el argumento extra de la llamada a la emision del hijo y lo asigna al estado local:
+
+```javascript
+<ChildComp @response="(msg) => childMsg=msg" />
+```
+
+Ejemplo completo:
+
+```javascript
+// Componente padre
+<script>
+import ChildComp from './ChildComp.vue'
+
+export default {
+  components: {
+    ChildComp
+  },
+  data() {
+    return {
+      childMsg: 'No child msg yet'
+    }
+  }
+}
+</script>
+
+<template>
+  <ChildComp @response="(msg) => childMsg = msg" />
+  <p>{{ childMsg }}</p>
+</template>
+
+// Componente hijo
+
+<script>
+export default {
+  emits: ['response'],
+  created() {
+    this.$emit('response', 'hello from child')
+  }
+}
+</script>
+
+<template>
+  <h2>Child component</h2>
+</template>
+```
+
+## 13. Slots
+
+En adicion a pasar informacion via props, los componentes padres pueden pasar tambien fragmentos de template a los hijos mediante `slots`:
+
+```javascript
+<ChildComp>Esto es algo de contenido de slot!</ChildComp>
+```
+
+En el componente hijo, se puede renderizar el contenido del slot del padre utilizando el elemento <slot> como salida:
+
+```javascript
+// En la template del componente hijo
+<slot />
+```
+
+El contenido dentro de la salida de `<slot>` sera tratado como contenido "alternativo" y se mostrara solo si el componente padre no pasa ningun contenido en el slot:
+
+```html
+<slot>Contenido Alternativo< /slot></slot>
+```
+
+Ejemplo completo:
+
+```javascript
+// Componente Padre
+<script>
+import ChildComp from './ChildComp.vue'
+
+export default {
+  components: {
+    ChildComp
+  },
+  data() {
+    return {
+      msg: 'from parent'
+    }
+  }
+}
+</script>
+
+<template>
+  <ChildComp>{{msg}}</ChildComp>
+</template>
+
+// Componente Hijo
+
+<template>
+  <slot>Contenido Alternativo</slot>
+</template>
+
+```
+
+## **Mas informacion**
+
+Crear un proyecto de Vue:
+https://vuejs.org/guide/quick-start.html
+
+Revisar todos los temas tratados en mayor detalle:
+https://vuejs.org/guide/essentials/application.html
+
+Ejemplos Practicos:
+https://vuejs.org/examples/
