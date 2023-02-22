@@ -1,4 +1,4 @@
-# Vue Router 3 (para Vue 2)
+# Vuex
 
 ## 1. ¿Que es Vuex?
 
