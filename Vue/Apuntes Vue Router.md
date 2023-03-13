@@ -228,7 +228,6 @@ Dado el ejemplo previo:
 
 ```html
 <div id="app">
-  `
   <router-view></router-view>
 </div>
 ```

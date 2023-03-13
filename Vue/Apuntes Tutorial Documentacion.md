@@ -102,7 +102,7 @@ Los Event handlers tambien pueden utilizar expresiones inline, y pueden simplifi
 Utilizando `v-bind`y `v-on` juntos, podemos crear una vinculacion en dos sentidos en elementos de input de formularios:
 
 ```html
-<input value="text" @input="inInput" placeholder="Type Here" />
+<input value="text" @input="onInput" placeholder="Type Here" />
 ```
 
 ```javascript
@@ -120,7 +120,7 @@ export default {
 };
 ```
 
-Para simplificar las vinculaciones en dos direcciones, Vue provee una directiva `v-model`que es esencialmente azucar sintactica para lo que vimos arriba:
+Para simplificar las vinculaciones en dos direcciones, Vue provee una directiva `v-model` que es esencialmente azucar sintactica para lo que vimos arriba:
 
 ```html
 <input v-model="text" />
