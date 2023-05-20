@@ -252,6 +252,7 @@ app.module.ts
 ```typescript
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
+import { FormsModule } from "@angular/forms";
 
 import { AppComponent } from "./app.component";
 
@@ -262,7 +263,9 @@ import { AppComponent } from "./app.component";
   ],
   imports: [
     // Los componentes importados tambien se pueden utilizar, pero se necesita que esten exportados en su origen.
+    // Los imports nos permiten inyectar de manera global las dependencias que vamos a utilizar habitualmente en toda nuestra app, pasandolas a los componentes declarados y a todos sus hijos.
     BrowserModule, // Router
+    FormsModule, // Para poder utilizar el ngModule
   ],
   providers: [],
   bootstrap: [AppComponent],
@@ -302,6 +305,7 @@ export class AppComponent {
 En `app.component.html`es donde se indicara la estructura HTML y se aplicarán las clases necesarias para el renderizado del componente en cuestión.
 
 Estructura del archivo HTML del componente de la app por defecto:
+
 ```html
 <style>
  /* Aqui van los estilos del html del componente */
