@@ -329,19 +329,19 @@ Ejemplo:
 
 - En la vista del componente hijo declaramos el evento en la etiqueta correspondiente, haciendo uso del método declarado en el controlador:
 
-````html
-<h1>¡Hola, {{ nombre }}!</h1>
+  ```html
+  <h1>¡Hola, {{ nombre }}!</h1>
 
-<h3 id="usuario" [innerText]="nombre">
-  <!-- No indicamos nada en las etiquetas, sino que el valor viene definido por la propiedad -->
-</h3>
+  <h3 id="usuario" [innerText]="nombre">
+    <!-- No indicamos nada en las etiquetas, sino que el valor viene definido por la propiedad -->
+  </h3>
 
-<!-- Creamos un botón que gestiona un evento -->
-<!-- El evento se declara con parentesis y se vincula a un metodo del controlador, en este caso, el alertaSaludo() -->
-<button id="emit-alerta" (click)="enviarMensajeAlPadre()">
-  Enviar Mensaje de Saludo al Componente Padre</button
->```
-````
+  <!-- Creamos un botón que gestiona un evento -->
+  <!-- El evento se declara con parentesis y se vincula a un metodo del controlador, en este caso, el alertaSaludo() -->
+  <button id="emit-alerta" (click)="enviarMensajeAlPadre()">
+    Enviar Mensaje de Saludo al Componente Padre</button
+  >
+  ```
 
 - En el controlador del componente padre creamos un método que recibe el mensaje del componente hijo y realiza una operacion con el:
 
@@ -485,6 +485,8 @@ Tambien podemos hacer uso de la directiva `ngStyle`, que nos permite definir un 
 
 Ejemplo:
 
+- En el controlador: 
+
 ```javascript
 import {
   Component,
@@ -524,6 +526,8 @@ export class SaludoComponent implements OnInit, OnDestroy, OnChanges {
   //...
 }
 ```
+
+- En la vista: 
 
 ```html
 <h1>¡Hola, {{ nombre }}!</h1>
